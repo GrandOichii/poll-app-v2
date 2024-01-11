@@ -52,10 +52,8 @@ public class UserService : IUserService
         var users = await _usersCollection.FindAsync(u => u.Email == user.Email);
         var existing = await users.FirstAsync() ?? throw new InvalidLoginCredentialsException();
 
-        // TODO check password hash
-        if (existing.PasswordHash != user.Password) throw new InvalidLoginCredentialsException();
+        if (!BCrypt.Net.BCrypt.Verify(user.Password, existing.PasswordHash)) throw new InvalidLoginCredentialsException();
 
-        // TODO return actual jwt token
         return "jwt token";
     }
 }

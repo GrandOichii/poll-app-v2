@@ -1,3 +1,5 @@
+// using DevOne.Security.Cryptography.BCrypt;
+
 namespace PollApp.Api.Models;
 
 public class PostUser {
@@ -5,10 +7,9 @@ public class PostUser {
     public required string Password { get; set; }
 
     public User ToUser() {
-        // TODO hash password
         return new User {
             Email = Email,
-            PasswordHash = Password
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(Password)
         };
     }
 }
