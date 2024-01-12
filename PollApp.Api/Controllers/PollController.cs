@@ -1,5 +1,6 @@
 namespace PollApp.Api.Controllers;
 
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,9 +19,12 @@ public class PollController : ControllerBase {
         return Ok(await _pollService.All());
     }
 
-    // TODO restrict to admin users
+    [Authorize(Roles = "Admin")]
     [HttpPost("create")]
     public async Task<IActionResult> Create([FromBody] CreatePoll poll) {
+        var role = this.ExtractClaim(ClaimTypes.Role);
+        // if (role != "Admin")
+            // return Unauthorized("only admins can create polls");
         return Ok(await _pollService.Add(poll));
     }
 }
