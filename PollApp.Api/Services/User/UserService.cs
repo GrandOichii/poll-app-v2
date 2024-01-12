@@ -65,6 +65,7 @@ public class UserService : IUserService
 
     private string CreateToken(User user) {
         var claims = new List<Claim>(){
+            new(ClaimTypes.NameIdentifier, user.Id!),
             new(ClaimTypes.Email, user.Email),
             new(ClaimTypes.Role, user.IsAdmin ? "Admin" : "User")
         };

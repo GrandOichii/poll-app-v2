@@ -26,8 +26,10 @@ public class PollService : IPollService
         return (await _pollsCollection.Find(_ => true).ToListAsync()).Select(_mapper.Map<GetPoll>);
     }
 
-    public async Task<IEnumerable<GetPoll>> Add(CreatePoll poll) {
-        await _pollsCollection.InsertOneAsync(_mapper.Map<Poll>(poll));
+    public async Task<IEnumerable<GetPoll>> Add(CreatePoll poll, string id) {
+        var result = _mapper.Map<Poll>(poll);
+        result.OwnerId = id;
+        await _pollsCollection.InsertOneAsync(result);
         return await All();
     }
 }

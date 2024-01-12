@@ -22,9 +22,7 @@ public class PollController : ControllerBase {
     [Authorize(Roles = "Admin")]
     [HttpPost("create")]
     public async Task<IActionResult> Create([FromBody] CreatePoll poll) {
-        var role = this.ExtractClaim(ClaimTypes.Role);
-        // if (role != "Admin")
-            // return Unauthorized("only admins can create polls");
-        return Ok(await _pollService.Add(poll));
+        var id = this.ExtractClaim(ClaimTypes.NameIdentifier);
+        return Ok(await _pollService.Add(poll, id));
     }
 }

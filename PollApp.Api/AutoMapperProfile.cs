@@ -7,6 +7,9 @@ public class AutoMapperProfile : Profile {
     {
         CreateMap<Poll, GetPoll>();
         CreateMap<CreatePoll, Poll>();
+        
+        CreateMap<PostOption, Option>();
+        CreateMap<Option, GetOption>();
 
         CreateMap<User, GetUser>();
     }
