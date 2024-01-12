@@ -1,5 +1,6 @@
 namespace PollApp.Api.Controllers;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -11,6 +12,7 @@ public class PollController : ControllerBase {
         _pollService = pollService;
     }
 
+    [Authorize]
     [HttpGet("all")]
     public async Task<IActionResult> All() {
         return Ok(await _pollService.All());

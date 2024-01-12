@@ -12,5 +12,6 @@ public class User {
     public required string Email { get; set; }
     [BsonElement("password_hash")]
     public required string PasswordHash { get; set; }
-    
+    [BsonElement("is_admin")]
+    public bool IsAdmin { get; set; }
 }

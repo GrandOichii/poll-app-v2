@@ -1,6 +1,10 @@
 
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using AutoMapper;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 
 namespace PollApp.Api.Services;
@@ -20,10 +24,12 @@ public class InvalidLoginCredentialsException : Exception
 
 public class UserService : IUserService
 {
-    public readonly IMongoCollection<User> _usersCollection;
-    public readonly IMapper _mapper;
-    public UserService(IMapper mapper, IOptions<StoreDatabaseSettings> pollStoreDatabaseSettings) {
+    private readonly IMongoCollection<User> _usersCollection;
+    private readonly IMapper _mapper;
+    private readonly IConfiguration _configuration;
+    public UserService(IMapper mapper, IConfiguration configuration, IOptions<StoreDatabaseSettings> pollStoreDatabaseSettings) {
         _mapper = mapper;
+        _configuration = configuration;
 
         _usersCollection = new MongoClient(
             pollStoreDatabaseSettings.Value.ConnectionString
@@ -54,6 +60,25 @@ public class UserService : IUserService
 
         if (!BCrypt.Net.BCrypt.Verify(user.Password, existing.PasswordHash)) throw new InvalidLoginCredentialsException();
 
-        return "jwt token";
+        return CreateToken(existing);
     }
+
+    private string CreateToken(User user) {
+        var claims = new List<Claim>(){
+            new(ClaimTypes.Email, user.Email),
+            new(ClaimTypes.Role, user.IsAdmin ? "Admin" : "User")
+        };
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value!));
+        var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+        var token = new JwtSecurityToken(
+            claims: claims,
+            expires: DateTime.Now.AddDays(1),
+            signingCredentials: cred
+        );
+        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+        return jwt;
+    }
+
 }
