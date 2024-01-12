@@ -18,4 +18,8 @@
 
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="PollApp.Api.Tests" />
+  </ItemGroup>
+
 </Project>

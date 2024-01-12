@@ -25,4 +25,14 @@ public class PollController : ControllerBase {
         var id = this.ExtractClaim(ClaimTypes.NameIdentifier);
         return Ok(await _pollService.Add(poll, id));
     }
+
+    [Authorize(Roles = "User")]
+    [HttpPost("vote")]
+    public async Task<IActionResult> Vote([FromBody] Vote vote) {
+        var id = this.ExtractClaim(ClaimTypes.NameIdentifier);
+        // try {
+            var result = await _pollService.Vote(id, vote.PollId, vote.OptionI);
+            return Ok(result);
+        // }
+    }
 }

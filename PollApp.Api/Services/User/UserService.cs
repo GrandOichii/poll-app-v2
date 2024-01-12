@@ -22,6 +22,12 @@ public class InvalidLoginCredentialsException : Exception
     public InvalidLoginCredentialsException(string message) : base(message) { }
 }
 
+[Serializable]
+public class UserNotFoundException : Exception
+{
+    public UserNotFoundException(string id) : base("user with id " + id + " not found") { }
+}
+
 public class UserService : IUserService
 {
     private readonly IMongoCollection<User> _usersCollection;
@@ -62,6 +68,13 @@ public class UserService : IUserService
 
         return CreateToken(existing);
     }
+
+    public async Task<User> ById(string id) {
+        var result = await _usersCollection.Find(u => u.Id == id).FirstOrDefaultAsync()
+            ?? throw new UserNotFoundException(id);
+        return result;
+    }
+
 
     private string CreateToken(User user) {
         var claims = new List<Claim>(){

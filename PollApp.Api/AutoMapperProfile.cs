@@ -9,7 +9,8 @@ public class AutoMapperProfile : Profile {
         CreateMap<CreatePoll, Poll>();
         
         CreateMap<PostOption, Option>();
-        CreateMap<Option, GetOption>();
+        CreateMap<Option, GetOption>()
+            .ForMember(go => go.VoteCount, b => b.MapFrom(o => o.Voters.Count));
 
         CreateMap<User, GetUser>();
     }
