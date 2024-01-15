@@ -31,9 +31,11 @@ public class PollController : ControllerBase {
     [HttpPost("vote")]
     public async Task<IActionResult> Vote([FromBody] Vote vote) {
         var id = this.ExtractClaim(ClaimTypes.NameIdentifier);
-        // try {
+        try {
             var result = await _pollService.Vote(id, vote.PollId, vote.OptionI);
             return Ok(result);
-        // }
+        } catch (AlreadyVotedException e) {
+            return BadRequest(e);
+        }
     }
 }
