@@ -33,7 +33,6 @@ public class AuthControllerTests {
     } 
 
     
-    // [InlineData()]
     [Fact]
     public async Task ShouldNotRegister() {
         // Arrange
@@ -46,7 +45,5 @@ public class AuthControllerTests {
 
         // Assert
         result.Should().BeOfType<ConflictObjectResult>();
-    }
-
-
+    }   
 }

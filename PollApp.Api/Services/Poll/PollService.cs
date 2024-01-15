@@ -44,16 +44,17 @@ public class PollService : IPollService
         );
     }
 
-    public async Task<IEnumerable<GetPoll>> All()
+    public async Task<IEnumerable<GetPoll>> All(string userId)
     {
-        return (await _pollsCollection.Find(_ => true).ToListAsync()).Select(_mapper.Map<GetPoll>);
+        return (await _pollsCollection.Find(_ => true).ToListAsync())
+            .Select(p => _mapper.Map<GetPoll>(p, opt => opt.Items["UserId"] = userId));
     }
 
-    public async Task<IEnumerable<GetPoll>> Add(CreatePoll poll, string id) {
+    public async Task<IEnumerable<GetPoll>> Add(CreatePoll poll, string ownerId) {
         var result = _mapper.Map<Poll>(poll);
-        result.OwnerId = id;
+        result.OwnerId = ownerId;
         await _pollsCollection.InsertOneAsync(result);
-        return await All();
+        return await All(ownerId);
     }
 
     public async Task<GetPoll> Vote(string ownerId, string pollId, int optionI) {
@@ -67,33 +68,7 @@ public class PollService : IPollService
         var result = await _pollsCollection.ReplaceOneAsync(p => p.Id == pollId, poll);
         if (result.ModifiedCount == 0) throw new Exception("failed to update");
 
-        return _mapper.Map<GetPoll>(poll);
+        return _mapper.Map<GetPoll>(poll, opt => opt.Items["UserId"] = ownerId);
     }
 
 }
-
-// public class Global {
-//     private Global() {}
-//     public static readonly Global Instance = new();
-
-//     public List<Poll> Polls { get; } = new();
-// }
-
-
-// public class PollService_Old : IPollService
-// {
-//     public readonly IMapper _mapper;
-//     public PollService_Old(IMapper mapper) {
-//         _mapper = mapper;
-//     }
-
-//     public async Task<IEnumerable<GetPoll>> All()
-//     {
-//         return Global.Instance.Polls.Select(_mapper.Map<GetPoll>);
-//     }
-
-//     public async Task<IEnumerable<GetPoll>> Add(Poll poll) {
-//         Global.Instance.Polls.Add(poll);
-//         return await All();
-//     }
-// }

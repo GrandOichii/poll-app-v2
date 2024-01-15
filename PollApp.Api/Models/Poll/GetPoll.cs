@@ -8,4 +8,5 @@ public class GetPoll {
     public required string Description { get; set; }
     
     public required List<GetOption> Options { get; set; }
+    public required bool CanVote { get; set; }
 }

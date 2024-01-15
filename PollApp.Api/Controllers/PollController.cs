@@ -16,7 +16,8 @@ public class PollController : ControllerBase {
     [Authorize]
     [HttpGet("all")]
     public async Task<IActionResult> All() {
-        return Ok(await _pollService.All());
+        var id = this.ExtractClaim(ClaimTypes.NameIdentifier);
+        return Ok(await _pollService.All(id));
     }
 
     [Authorize(Roles = "Admin")]

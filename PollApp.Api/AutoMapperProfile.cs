@@ -5,7 +5,8 @@ namespace PollApp.Api;
 public class AutoMapperProfile : Profile {
     public AutoMapperProfile()
     {
-        CreateMap<Poll, GetPoll>();
+        CreateMap<Poll, GetPoll>()
+            .ForMember(gp => gp.CanVote, b => b.MapFrom((src, dest, destMember, context) => !src.Options.Any(o => o.Voters.Contains(context.Items["UserId"]))));
         CreateMap<CreatePoll, Poll>();
         
         CreateMap<PostOption, Option>();
