@@ -1,9 +1,11 @@
 namespace PollApp.Api.Controllers;
 
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 
 public class PollQuery {
     [FromQuery(Name = "expired")]
@@ -12,7 +14,10 @@ public class PollQuery {
     public PollQuery() {}
 
     public bool Matches(GetPoll poll) {
-        return Expired && (DateTime.Now > poll.ExpireDate);
+        // FIXME
+        return 
+            Expired && (DateTime.Now > poll.ExpireDate)
+        ;
     }
 }
 
@@ -53,5 +58,13 @@ public class PollController : ControllerBase {
         } catch (AlreadyVotedException e) {
             return BadRequest(e);
         }
+    }
+
+    [Authorize]
+    [HttpGet("{pollId}")]
+    public async Task<IActionResult> ById([FromRoute] string pollId) {
+        var userId = this.ExtractClaim(ClaimTypes.NameIdentifier);
+        var result = await _pollService.ById(userId, pollId);
+        return Ok(result);
     }
 }

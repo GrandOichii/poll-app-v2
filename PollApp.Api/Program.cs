@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using PollApp.Api.Repositories;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace PollApp.Api;
@@ -21,8 +22,15 @@ public class Program {
             builder.Configuration.GetSection("Database")
         );
 
+        // Add Redis configuration
+        builder.Services.AddStackExchangeRedisCache(options => {
+            var conn = builder.Configuration.GetConnectionString("Redis");
+            options.Configuration = conn;
+        });
+
+
         // Add services
-        // builder.Services.AddScoped<IPollService, PollService>();
+        builder.Services.AddSingleton<ICachedPollRepository, CachedPollRespository>();
         builder.Services.AddSingleton<IPollService, PollService>();
         builder.Services.AddSingleton<IUserService, UserService>();
 

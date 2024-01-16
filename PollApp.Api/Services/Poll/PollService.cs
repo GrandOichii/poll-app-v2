@@ -1,8 +1,14 @@
 
 using System.Data.Common;
+using System.Text.Json;
 using AutoMapper;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
+using MongoDB.Bson.IO;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using PollApp.Api.Repositories;
 
 namespace PollApp.Api.Services;
 
@@ -31,12 +37,14 @@ public class PollService : IPollService
     private readonly IUserService _userService;
     private readonly IMongoCollection<Poll> _pollsCollection;
     private readonly IMapper _mapper;
-    public PollService(IMapper mapper, IUserService userService, IOptions<StoreDatabaseSettings> pollStoreDatabaseSettings) {
+    private readonly ICachedPollRepository _cache;
+    public PollService(IMapper mapper, IUserService userService, ICachedPollRepository cache, IOptions<StoreDatabaseSettings> pollStoreDatabaseSettings) {
         _mapper = mapper;
         _userService = userService;
+        _cache = cache;
 
         _pollsCollection = new MongoClient(
-            pollStoreDatabaseSettings.Value.ConnectionString
+        pollStoreDatabaseSettings.Value.ConnectionString
         ).GetDatabase(
             pollStoreDatabaseSettings.Value.DatabaseName
         ).GetCollection<Poll>(
@@ -58,17 +66,44 @@ public class PollService : IPollService
     }
 
     public async Task<GetPoll> Vote(string ownerId, string pollId, int optionI) {
-        var poll = await _pollsCollection.Find(p => p.Id == pollId).FirstOrDefaultAsync()
+        var poll = await ByIdInternal(pollId)
             ?? throw new PollNotFoundException(pollId);
+
+        // checks
         if (poll.Options.Count <= optionI) throw new OptionNotFoundException(pollId, optionI);
         var user = _userService.ById(ownerId) ?? throw new UserNotFoundException(ownerId);
+        
         var alreadyVoted = poll.Options.Any(option => option.Voters.Contains(ownerId));
         if (alreadyVoted) throw new AlreadyVotedException(ownerId, pollId);
         poll.Options[optionI].Voters.Add(ownerId);
+        await _cache.Remember(poll);
         var result = await _pollsCollection.ReplaceOneAsync(p => p.Id == pollId, poll);
         if (result.ModifiedCount == 0) throw new Exception("failed to update");
 
         return _mapper.Map<GetPoll>(poll, opt => opt.Items["UserId"] = ownerId);
     }
 
+    public async Task<GetPoll> ById(string userId, string pollId) {
+        var poll = await ByIdInternal(pollId)
+            ?? throw new PollNotFoundException(pollId);
+        
+        return _mapper.Map<GetPoll>(
+            poll,
+            opt => opt.Items["UserId"] = userId
+        );
+    }
+
+    private async Task<Poll?> ByIdInternal(string pollId) {
+        var result = await _cache.Get(pollId);
+        if (result is not null) {
+            return result;
+        }
+        result = await _pollsCollection.Find(p => p.Id == pollId).FirstOrDefaultAsync();
+        if (result is null) {
+            return result;
+        }
+        await _cache.Remember(result);
+        await Task.Delay(5000);
+        return result;
+    }
 }
