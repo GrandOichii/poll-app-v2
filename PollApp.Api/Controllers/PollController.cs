@@ -16,7 +16,7 @@ public class PollQuery {
     public bool Matches(GetPoll poll) {
         // FIXME
         return 
-            Expired && (DateTime.Now > poll.ExpireDate)
+            Expired || (DateTime.Now < poll.ExpireDate)
         ;
     }
 }
