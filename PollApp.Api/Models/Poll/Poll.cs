@@ -19,4 +19,12 @@ public class Poll {
     
     [BsonElement("options")]
     public List<Option> Options { get; set; } = new();
+
+    [BsonElement("post_date")]
+    [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
+    public DateTime PostDate { get; set; }
+
+    [BsonElement("expire_date")]
+    [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
+    public DateTime ExpireDate { get; set; }
 }

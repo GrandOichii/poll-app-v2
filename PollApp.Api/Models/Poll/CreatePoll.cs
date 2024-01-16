@@ -6,4 +6,5 @@ public class CreatePoll {
     public required string Description { get; set; }
 
     public required List<PostOption> Options { get; set; }
+    public DateTime ExpireDate { get; set; }
 }

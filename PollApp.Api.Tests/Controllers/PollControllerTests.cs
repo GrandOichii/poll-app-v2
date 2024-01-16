@@ -34,7 +34,7 @@ public class PollControllerTests {
 
     
     [Fact]
-    public async Task ShouldFetchAll()
+    public async Task ShouldFetchQueried()
     {
         // Arrange
         var userId = "userid";
@@ -43,7 +43,7 @@ public class PollControllerTests {
         AddUser("userid", "mail");
 
         // Act
-        var result = await _pollController.All();
+        var result = await _pollController.Queried(new());
     
         // Assert
         result.Should().BeOfType<OkObjectResult>();

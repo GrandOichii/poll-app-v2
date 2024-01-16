@@ -1,8 +1,20 @@
 namespace PollApp.Api.Controllers;
 
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
+public class PollQuery {
+    [FromQuery(Name = "expired")]
+    public bool Expired {get; set;} = false;
+
+    public PollQuery() {}
+
+    public bool Matches(GetPoll poll) {
+        return Expired && (DateTime.Now > poll.ExpireDate);
+    }
+}
 
 [ApiController]
 [Route("/api/v1/poll")]
@@ -13,11 +25,15 @@ public class PollController : ControllerBase {
         _pollService = pollService;
     }
 
+
     [Authorize]
-    [HttpGet("all")]
-    public async Task<IActionResult> All() {
+    [HttpGet]
+    public async Task<IActionResult> Queried([FromQuery] PollQuery query) {
         var id = this.ExtractClaim(ClaimTypes.NameIdentifier);
-        return Ok(await _pollService.All(id));
+
+        // TODO? should this be in the service
+        var all = await _pollService.All(id);
+        return Ok(all.Where(query.Matches));
     }
 
     [Authorize(Roles = "Admin")]

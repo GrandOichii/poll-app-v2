@@ -7,7 +7,8 @@ public class AutoMapperProfile : Profile {
     {
         CreateMap<Poll, GetPoll>()
             .ForMember(gp => gp.CanVote, b => b.MapFrom((src, dest, destMember, context) => !src.Options.Any(o => o.Voters.Contains(context.Items["UserId"]))));
-        CreateMap<CreatePoll, Poll>();
+        CreateMap<CreatePoll, Poll>()
+            .ForMember(p => p.PostDate, b => b.MapFrom(_ => DateTime.Now));
         
         CreateMap<PostOption, Option>();
         CreateMap<Option, GetOption>()

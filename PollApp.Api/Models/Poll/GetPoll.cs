@@ -9,4 +9,6 @@ public class GetPoll {
     
     public required List<GetOption> Options { get; set; }
     public required bool CanVote { get; set; }
+    public DateTime PostDate { get; set; }
+    public DateTime ExpireDate { get; set; }
 }
