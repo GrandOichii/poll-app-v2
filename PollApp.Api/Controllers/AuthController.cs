@@ -21,8 +21,9 @@ public class AuthController : ControllerBase {
         
         } catch (EmailTakenException e) {
             return Conflict(e.Message);
+        } catch (InvalidRegisterCredentialsException e) {
+            return BadRequest(e.Message);
         }
-        // TODO catch bad request
     }
 
     [HttpPost("/login")]

@@ -2,6 +2,12 @@
 
 namespace PollApp.Api.Models;
 
+[Serializable]
+public class InvalidRegisterCredentialsException : Exception
+{
+    public InvalidRegisterCredentialsException(string message) : base(message) { }
+}
+
 public class PostUser {
     public required string Email { get; set; }
     public required string Password { get; set; }
@@ -11,5 +17,14 @@ public class PostUser {
             Email = Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(Password)
         };
+    }
+
+    public void Validate() {
+        // TODO better email validation
+        if (string.IsNullOrEmpty(Email))
+            throw new InvalidRegisterCredentialsException($"invalid email");
+        // TODO better password validation
+        if (string.IsNullOrEmpty(Password))
+            throw new InvalidRegisterCredentialsException($"invalid email");
     }
 }

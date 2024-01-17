@@ -53,6 +53,8 @@ public class UserService : IUserService
             throw new EmailTakenException(user.Email);
         }
 
+        user.Validate();
+
         var result = user.ToUser();
         await _usersCollection.InsertOneAsync(result);
 

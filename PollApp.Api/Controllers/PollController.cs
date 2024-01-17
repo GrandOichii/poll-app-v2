@@ -14,7 +14,6 @@ public class PollQuery {
     public PollQuery() {}
 
     public bool Matches(GetPoll poll) {
-        // FIXME
         return 
             Expired || (DateTime.Now < poll.ExpireDate)
         ;
@@ -44,8 +43,16 @@ public class PollController : ControllerBase {
     [Authorize(Roles = "Admin")]
     [HttpPost("create")]
     public async Task<IActionResult> Create([FromBody] CreatePoll poll) {
-        var id = this.ExtractClaim(ClaimTypes.NameIdentifier);
-        return Ok(await _pollService.Add(poll, id));
+        try {
+
+            var id = this.ExtractClaim(ClaimTypes.NameIdentifier);
+            return Ok(await _pollService.Add(poll, id));
+
+        } catch (InvalidPollCreationException e) {
+            return BadRequest(e.Message);
+        } catch (InvalidPollOptionCreationException e) {
+            return BadRequest(e.Message);
+        }
     }
 
     [Authorize(Roles = "User")]

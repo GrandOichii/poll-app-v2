@@ -59,6 +59,8 @@ public class PollService : IPollService
     }
 
     public async Task<IEnumerable<GetPoll>> Add(CreatePoll poll, string ownerId) {
+        // TODO check ownerId
+        poll.Validate();
         var result = _mapper.Map<Poll>(poll);
         result.OwnerId = ownerId;
         await _pollsCollection.InsertOneAsync(result);
