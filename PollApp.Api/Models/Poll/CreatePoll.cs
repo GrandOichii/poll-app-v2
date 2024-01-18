@@ -19,9 +19,8 @@ public class CreatePoll {
             throw new InvalidPollCreationException("poll title is empty");
         if (string.IsNullOrEmpty(Description))
             throw new InvalidPollCreationException("poll description is empty");
-        if (Options.Count == 0)
-            throw new InvalidPollCreationException("no poll options specified");
-        // TODO check options
+        if (Options.Count < 2)
+            throw new InvalidPollCreationException($"invalid poll options count: ${Options.Count}");            
         foreach (var option in Options)
             option.Validate();
     }

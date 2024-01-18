@@ -12,7 +12,7 @@ public class AuthController : ControllerBase {
         _userService = userService;
     }
 
-    [HttpPost("/register")]
+    [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] PostUser user) {
         try {
 
@@ -26,7 +26,7 @@ public class AuthController : ControllerBase {
         }
     }
 
-    [HttpPost("/login")]
+    [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] PostUser user) {
         try {
 

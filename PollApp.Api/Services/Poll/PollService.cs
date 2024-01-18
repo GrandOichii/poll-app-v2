@@ -72,7 +72,7 @@ public class PollService : IPollService
             ?? throw new PollNotFoundException(pollId);
 
         // checks
-        if (poll.Options.Count <= optionI) throw new OptionNotFoundException(pollId, optionI);
+        if (optionI < 0 || optionI >= poll.Options.Count) throw new OptionNotFoundException(pollId, optionI);
         var user = _userService.ById(ownerId) ?? throw new UserNotFoundException(ownerId);
         
         var alreadyVoted = poll.Options.Any(option => option.Voters.Contains(ownerId));

@@ -62,16 +62,26 @@ public class PollController : ControllerBase {
         try {
             var result = await _pollService.Vote(id, vote.PollId, vote.OptionI);
             return Ok(result);
+        } catch (PollNotFoundException e) {
+            return BadRequest(e.Message);
         } catch (AlreadyVotedException e) {
-            return BadRequest(e);
+            return BadRequest(e.Message);
+        } catch (OptionNotFoundException e) {
+            return BadRequest(e.Message);
+        } catch (UserNotFoundException e) {
+            return BadRequest(e.Message);
         }
     }
 
     [Authorize]
     [HttpGet("{pollId}")]
     public async Task<IActionResult> ById([FromRoute] string pollId) {
-        var userId = this.ExtractClaim(ClaimTypes.NameIdentifier);
-        var result = await _pollService.ById(userId, pollId);
-        return Ok(result);
+        try {
+            var userId = this.ExtractClaim(ClaimTypes.NameIdentifier);
+            var result = await _pollService.ById(userId, pollId);
+            return Ok(result);
+        } catch (PollNotFoundException e) {
+            return BadRequest(e.Message);
+        }
     }
 }
