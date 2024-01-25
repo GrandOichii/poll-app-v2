@@ -27,4 +27,7 @@ public class Poll {
     [BsonElement("expire_date")]
     [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
     public DateTime ExpireDate { get; set; }
+
+    [BsonElement("votes_visible")]
+    public required bool VotesVisible { get; set; }
 }

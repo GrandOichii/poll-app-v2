@@ -105,7 +105,7 @@ public class PollService : IPollService
             return result;
         }
         await _cache.Remember(result);
-        await Task.Delay(5000);
+        // await Task.Delay(5000);
         return result;
     }
 }

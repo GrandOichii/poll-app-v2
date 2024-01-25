@@ -6,13 +6,20 @@ public class AutoMapperProfile : Profile {
     public AutoMapperProfile()
     {
         CreateMap<Poll, GetPoll>()
-            .ForMember(gp => gp.CanVote, b => b.MapFrom((src, dest, destMember, context) => !src.Options.Any(o => o.Voters.Contains(context.Items["UserId"]))));
+            .ForMember(p => p.CanVote, o => o.MapFrom((src, dest, destMember, context) => src.Options.All(o => !o.Voters.Contains(context.Items["UserId"]))))
+            // TODO there seems to be a more elegant way to do this, but I don't know how
+            // .ForMember(p => p.)
+            .AfterMap((src, dest) => {
+                dest.Options.ForEach(o => o.VoteCount = src.VotesVisible ? o.VoteCount : 0);
+            });
+
         CreateMap<CreatePoll, Poll>()
             .ForMember(p => p.PostDate, b => b.MapFrom(_ => DateTime.Now));
         
         CreateMap<PostOption, Option>();
         CreateMap<Option, GetOption>()
-            .ForMember(go => go.VoteCount, b => b.MapFrom(o => o.Voters.Count));
+            .ForMember(o => o.VoteCount, o => o.MapFrom(o => o.Voters.Count))
+        ;
 
         CreateMap<User, GetUser>();
     }
