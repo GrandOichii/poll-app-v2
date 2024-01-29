@@ -8,9 +8,9 @@ public class AutoMapperProfile : Profile {
         CreateMap<Poll, GetPoll>()
             .ForMember(p => p.CanVote, o => o.MapFrom((src, dest, destMember, context) => src.Options.All(o => !o.Voters.Contains(context.Items["UserId"]))))
             // TODO there seems to be a more elegant way to do this, but I don't know how
-            // .ForMember(p => p.)
             .AfterMap((src, dest) => {
-                dest.Options.ForEach(o => o.VoteCount = src.VotesVisible ? o.VoteCount : 0);
+                var now = DateTime.Now;
+                dest.Options.ForEach(o => o.VoteCount = src.VotesVisible || (src.ExpireDate < now) ? o.VoteCount : 0);
             });
 
         CreateMap<CreatePoll, Poll>()

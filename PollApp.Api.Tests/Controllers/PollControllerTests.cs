@@ -102,5 +102,5 @@ public class PollControllerTests {
         result2.Should().BeOfType<BadRequestObjectResult>();
     }
 
-
+    // TODO add more exception checks to vote endpoint
 }

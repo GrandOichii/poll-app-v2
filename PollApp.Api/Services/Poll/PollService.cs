@@ -32,6 +32,12 @@ public class OptionNotFoundException : Exception
     public OptionNotFoundException(string pollId, int optionI) : base("poll has no option with index " + optionI) { }
 }
 
+[Serializable]
+public class ExpiredPollException : Exception
+{
+    public ExpiredPollException(string pollId) : base("poll with id " + pollId + " is already expired") { }
+}
+
 public class PollService : IPollService
 {
     private readonly IUserService _userService;
@@ -70,6 +76,8 @@ public class PollService : IPollService
     public async Task<GetPoll> Vote(string ownerId, string pollId, int optionI) {
         var poll = await ByIdInternal(pollId)
             ?? throw new PollNotFoundException(pollId);
+
+        if (DateTime.Now > poll.ExpireDate) throw new ExpiredPollException(pollId);
 
         // checks
         if (optionI < 0 || optionI >= poll.Options.Count) throw new OptionNotFoundException(pollId, optionI);
