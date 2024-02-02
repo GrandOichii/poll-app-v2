@@ -49,6 +49,8 @@ public class PollEndpointTests
         return (await result.Content.ReadFromJsonAsync<List<GetPoll>>())![0];
     }
 
+    private static DateTime Tomorrow() => DateTime.Now.AddDays(1);
+
     [Fact]
     public async Task ShouldFetchAll() {
         // Arrange
@@ -77,7 +79,8 @@ public class PollEndpointTests
             Options = new() {
                 new PostOption{ Text = "Option1" },
                 new PostOption{ Text = "Option2" }
-            }
+            },
+            ExpireDate = Tomorrow()
         }));
 
         // Assert
@@ -173,7 +176,8 @@ public class PollEndpointTests
             Options = new() {
                 new PostOption{ Text = "Option1" },
                 new PostOption{ Text = "Option2" }
-            }
+            },
+            ExpireDate = Tomorrow()
         }));
         var poll = (await post.Content.ReadFromJsonAsync<List<GetPoll>>())![0];
         
@@ -213,7 +217,8 @@ public class PollEndpointTests
             Options = new() {
                 new PostOption{ Text = "Option1" },
                 new PostOption{ Text = "Option2" }
-            }
+            },
+            ExpireDate = Tomorrow()
         });
         await Login(client, "user@email.com", "pass");
 
@@ -247,7 +252,8 @@ public class PollEndpointTests
             Options = new() {
                 new PostOption{ Text = "Option1" },
                 new PostOption{ Text = "Option2" }
-            }
+            },
+            ExpireDate = Tomorrow()
         });
 
         // Act
@@ -273,7 +279,8 @@ public class PollEndpointTests
             Options = new() {
                 new PostOption{ Text = "Option1" },
                 new PostOption{ Text = "Option2" }
-            }
+            },
+            ExpireDate = Tomorrow()
         });
         await Login(client, "user@email.com", "pass");
 
@@ -302,7 +309,8 @@ public class PollEndpointTests
             Options = new() {
                 new PostOption{ Text = "Option1" },
                 new PostOption{ Text = "Option2" }
-            }
+            },
+            ExpireDate = Tomorrow()
         });
         await Login(client, "user@email.com", "pass");
 
