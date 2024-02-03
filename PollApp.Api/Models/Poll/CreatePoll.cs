@@ -13,7 +13,7 @@ public class CreatePoll {
 
     public required List<PostOption> Options { get; set; }
     public DateTime ExpireDate { get; set; }
-    public bool VotesVisible { get; set; }
+    public bool VotesVisible { get; set; }=true;
     public void Validate() {
         if (ExpireDate < DateTime.Now)
             throw new InvalidPollCreationException("can't create already expired poll");
