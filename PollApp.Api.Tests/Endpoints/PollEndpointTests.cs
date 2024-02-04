@@ -119,6 +119,7 @@ public class PollEndpointTests
                     new PostOption { Text = "Option1" },
                     new PostOption { Text = "Option2" },
                 },
+                ExpireDate = DateTime.Now.AddDays(1)
             } };
             yield return new object[] { new CreatePoll {
                 Title="Title",
@@ -127,11 +128,13 @@ public class PollEndpointTests
                     new PostOption { Text = "Option1" },
                     new PostOption { Text = "Option2" },
                 },
+                ExpireDate = DateTime.Now.AddDays(1)
             } };
             yield return new object[] { new CreatePoll {
                 Title="Title",
                 Description="Description",
                 Options=new(),
+                ExpireDate = DateTime.Now.AddDays(1)
             } };
             yield return new object[] { new CreatePoll {
                 Title="Title",
@@ -147,6 +150,16 @@ public class PollEndpointTests
                     new PostOption { Text = "Option1" },
                     new PostOption { Text = "" },
                 },
+                ExpireDate = DateTime.Now.AddDays(1)
+            } };
+            yield return new object[] { new CreatePoll {
+                Title="Title",
+                Description="Description",
+                Options=new() {
+                    new PostOption { Text = "Option1" },
+                    new PostOption { Text = "Option2" },
+                },
+                ExpireDate = DateTime.Now.AddDays(-1)
             } };
         }
     }

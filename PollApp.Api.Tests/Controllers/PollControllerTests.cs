@@ -102,5 +102,35 @@ public class PollControllerTests {
         result2.Should().BeOfType<BadRequestObjectResult>();
     }
 
+
+
+
+    public static IEnumerable<object[]> CreatePollExceptionsList
+    {
+        get
+        {
+            yield return new object[] { new InvalidPollCreationException("") };
+            yield return new object[] { new InvalidPollOptionCreationException("") };
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(CreatePollExceptionsList))]
+    public async Task ShouldHaveClientError(Exception e) {
+        // Arrange
+        var userId = "userid";
+        var polls = A.Fake<IEnumerable<GetPoll>>();
+        var poll = A.Fake<CreatePoll>();
+        AddUser(userId, "mail");
+        A.CallTo(() => _pollService.Add(poll, userId)).Throws(e);
+
+
+        // Act
+        var result = await _pollController.Create(poll);
+
+        // Arrange
+        result.Should().BeOfType<BadRequestObjectResult>();
+    }
+
     // TODO add more exception checks to vote endpoint
 }
