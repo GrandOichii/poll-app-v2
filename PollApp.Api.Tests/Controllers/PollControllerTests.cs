@@ -102,9 +102,6 @@ public class PollControllerTests {
         result2.Should().BeOfType<BadRequestObjectResult>();
     }
 
-
-
-
     public static IEnumerable<object[]> CreatePollExceptionsList
     {
         get
@@ -116,7 +113,7 @@ public class PollControllerTests {
 
     [Theory]
     [MemberData(nameof(CreatePollExceptionsList))]
-    public async Task ShouldHaveClientError(Exception e) {
+    public async Task ShouldFailCreateAndHaveClientError(Exception e) {
         // Arrange
         var userId = "userid";
         var polls = A.Fake<IEnumerable<GetPoll>>();
@@ -127,6 +124,34 @@ public class PollControllerTests {
 
         // Act
         var result = await _pollController.Create(poll);
+
+        // Arrange
+        result.Should().BeOfType<BadRequestObjectResult>();
+    }
+
+    public static IEnumerable<object[]> VoteExceptionsList
+    {
+        get
+        {
+            yield return new object[] { new PollNotFoundException("") };
+            yield return new object[] { new AlreadyVotedException("", "") };
+            yield return new object[] { new OptionNotFoundException("", 0) };
+            yield return new object[] { new UserNotFoundException("") };
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(VoteExceptionsList))]
+    public async Task ShouldFailVoteAndHaveClientError(Exception e) {
+        // Arrange
+        var vote = A.Fake<Vote>();
+        var userId = "userid";
+        A.CallTo(() => _pollService.Vote(userId, vote.PollId, vote.OptionI))
+            .Throws(e);
+        AddUser(userId, "mail");
+
+        // Act
+        var result = await _pollController.Vote(vote);
 
         // Arrange
         result.Should().BeOfType<BadRequestObjectResult>();
