@@ -251,6 +251,39 @@ public class PollEndpointTests
         newPoll!.Options[optionI].VoteCount.Should().Be(1);
     }
 
+    [Fact]
+    public async Task ShouldVoteInvisible() {
+        var optionI = 0;
+        // Arrange
+        var client = _factory.CreateClient();
+        var poll = await CreatePost(client, new PostUser{
+            Email = "admin@email.com",
+            Password = "pass"
+        }, new CreatePoll{
+            Description = "description",
+            Title = "title",
+            Options = new() {
+                new PostOption{ Text = "Option1" },
+                new PostOption{ Text = "Option2" }
+            },
+            ExpireDate = Tomorrow(),
+            VotesVisible = false
+        });
+        await Login(client, "user@email.com", "pass");
+
+        // Act
+        var result = await client.PostAsync("/api/v1/poll/vote", JsonContent.Create(new Vote {
+            OptionI = optionI,
+            PollId = poll.Id
+        }));
+
+        // Assert
+        var resPoll = await result.Content.ReadFromJsonAsync<GetPoll>();
+        resPoll.VotesVisible.Should().BeFalse();
+        resPoll.Should().NotBeNull();
+        resPoll!.Options[optionI].VoteCount.Should().Be(0);
+    }
+
     
     [Fact]
     public async Task ShouldFailVoteAdmin() {
