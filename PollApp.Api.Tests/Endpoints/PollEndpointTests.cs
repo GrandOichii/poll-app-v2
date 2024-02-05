@@ -223,7 +223,7 @@ public class PollEndpointTests
         var client = _factory.CreateClient();
         var poll = await CreatePost(client, new PostUser{
             Email = "admin@email.com",
-            Password = "pass"
+            Password = "password"
         }, new CreatePoll{
             Description = "description",
             Title = "title",
@@ -233,7 +233,7 @@ public class PollEndpointTests
             },
             ExpireDate = Tomorrow()
         });
-        await Login(client, "user@email.com", "pass");
+        await Login(client, "user@email.com", "password");
 
         // Act
         var result = await client.PostAsync("/api/v1/poll/vote", JsonContent.Create(new Vote {
@@ -258,7 +258,7 @@ public class PollEndpointTests
         var client = _factory.CreateClient();
         var poll = await CreatePost(client, new PostUser{
             Email = "admin@email.com",
-            Password = "pass"
+            Password = "password"
         }, new CreatePoll{
             Description = "description",
             Title = "title",
@@ -269,7 +269,7 @@ public class PollEndpointTests
             ExpireDate = Tomorrow(),
             VotesVisible = false
         });
-        await Login(client, "user@email.com", "pass");
+        await Login(client, "user@email.com", "password");
 
         // Act
         var result = await client.PostAsync("/api/v1/poll/vote", JsonContent.Create(new Vote {
@@ -291,7 +291,7 @@ public class PollEndpointTests
         var client = _factory.CreateClient();
         var poll = await CreatePost(client, new PostUser{
             Email = "admin@email.com",
-            Password = "pass"
+            Password = "password"
         }, new CreatePoll{
             Description = "description",
             Title = "title",
@@ -318,7 +318,7 @@ public class PollEndpointTests
         var client = _factory.CreateClient();
         var poll = await CreatePost(client, new PostUser{
             Email = "admin@email.com",
-            Password = "pass"
+            Password = "password"
         }, new CreatePoll{
             Description = "description",
             Title = "title",
@@ -328,7 +328,7 @@ public class PollEndpointTests
             },
             ExpireDate = Tomorrow()
         });
-        await Login(client, "user@email.com", "pass");
+        await Login(client, "user@email.com", "password");
 
         // Act
         var result = await client.PostAsync("/api/v1/poll/vote", JsonContent.Create(new Vote {
@@ -348,7 +348,7 @@ public class PollEndpointTests
         var client = _factory.CreateClient();
         var poll = await CreatePost(client, new PostUser{
             Email = "admin@email.com",
-            Password = "pass"
+            Password = "password"
         }, new CreatePoll{
             Description = "description",
             Title = "title",
@@ -358,7 +358,7 @@ public class PollEndpointTests
             },
             ExpireDate = Tomorrow()
         });
-        await Login(client, "user@email.com", "pass");
+        await Login(client, "user@email.com", "password");
 
         // Act
         var result = await client.PostAsync("/api/v1/poll/vote", JsonContent.Create(new Vote {

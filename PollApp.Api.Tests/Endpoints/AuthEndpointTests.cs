@@ -29,7 +29,7 @@ public class AuthEndpointTests
         // Act
         var result = await client.PostAsync("/api/v1/auth/register", JsonContent.Create(new PostUser{
             Email = "test@email.com",
-            Password = "pass"
+            Password = "password"
         }));
 
         // Assert
@@ -38,7 +38,7 @@ public class AuthEndpointTests
 
     // TODO add more cases
     [Theory]
-    [InlineData("mail@email.com", ""), InlineData("", "password")]
+    [InlineData("mail@email.com", ""), InlineData("", "password"), InlineData("mail@email.com", "short")]
     public async Task ShouldNotRegister(string email, string password) {
         // Arrange
         var client = _factory.CreateClient();

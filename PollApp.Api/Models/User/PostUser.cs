@@ -9,6 +9,8 @@ public class InvalidRegisterCredentialsException : Exception
 }
 
 public class PostUser {
+    private static readonly int MIN_PASSWORD_LENGTH = 8;
+
     public required string Email { get; set; }
     public required string Password { get; set; }
 
@@ -23,8 +25,12 @@ public class PostUser {
         // TODO better email validation
         if (string.IsNullOrEmpty(Email))
             throw new InvalidRegisterCredentialsException($"invalid email");
-        // TODO better password validation
         if (string.IsNullOrEmpty(Password))
-            throw new InvalidRegisterCredentialsException($"invalid email");
+            throw new InvalidRegisterCredentialsException($"invalid password");
+        
+        // TODO better password validation
+        if (Password.Length < MIN_PASSWORD_LENGTH)
+            throw new InvalidRegisterCredentialsException($"password too short: minimal length is {MIN_PASSWORD_LENGTH}");
+
     }
 }
