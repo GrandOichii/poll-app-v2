@@ -61,7 +61,7 @@ public class MockUserService : IUserService
             new(ClaimTypes.Role, user.IsAdmin ? "Admin" : "User")
         };
 
-        // TODO key has to be the same as the jwt token in the appsettings in the api project
+        // ! key has to be the same as the jwt token in the appsettings in the api project
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("super secret token"));
         var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
         var token = new JwtSecurityToken(
